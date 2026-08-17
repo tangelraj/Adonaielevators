@@ -1,0 +1,123 @@
+.enquiry-section {
+  background: linear-gradient(135deg, #0d5ea6 0%, #0a4a7d 100%);
+  padding: 60px 20px;
+  text-align: center;
+  color: white;
+}
+
+.enquiry-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 50px;
+  position: relative;
+  display: inline-block;
+}
+
+.enquiry-section h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: #4caf50;
+}
+
+.enquiry-form {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.enquiry-form input,
+.enquiry-form textarea {
+  padding: 12px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.enquiry-form input::placeholder,
+.enquiry-form textarea::placeholder {
+  color: #999;
+}
+
+.captcha-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.captcha-section label {
+  font-weight: bold;
+  color: #333;
+}
+
+.captcha-box {
+  background: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #333;
+  min-width: 80px;
+  text-align: center;
+}
+
+.captcha-section input {
+  width: 200px;
+}
+
+.submit-btn {
+  background: white;
+  color: #0d5ea6;
+  border: none;
+  padding: 12px 40px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  margin-top: 20px;
+  align-self: center;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-note {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  margin-top: 15px;
+}
+
+@media (max-width: 768px) {
+  .enquiry-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .captcha-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .captcha-section input {
+    width: 100%;
+  }
+}

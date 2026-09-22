@@ -116,6 +116,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+# DRF throttling - protects the public enquiry/captcha endpoints from being flooded
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_RATES': {
+        'enquiry': config('ENQUIRY_THROTTLE_RATE', default='5/min'),
+        'captcha': config('CAPTCHA_THROTTLE_RATE', default='20/min'),
+    },
+}
+
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 # During local development with DEBUG on, allow all origins to simplify frontend <-> backend testing
 if DEBUG:

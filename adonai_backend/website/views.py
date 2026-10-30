@@ -4,18 +4,34 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.throttling import ScopedRateThrottle
 from .models import HeroSection, Enquiry
 from .serializers import HeroSerializer, EnquirySerializer
+from .captcha import generate_captcha
 
 class HeroAPIView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'hero'
+
     def get(self, request):
         hero = HeroSection.objects.first()
         serializer = HeroSerializer(hero)
         return Response(serializer.data)
 
+class CaptchaAPIView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'captcha'
+
+    def get(self, request):
+        question, token = generate_captcha()
+        return Response({"question": question, "token": token})
+
 class EnquiryAPIView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'enquiry'
+
     def post(self, request):
-        serializer = EnquirySerializer(data=request.data)
+        serializer = EnquirySerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             enquiry = serializer.save()
 

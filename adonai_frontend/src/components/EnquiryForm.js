@@ -11,23 +11,21 @@ function EnquiryForm() {
   });
 
   const [captchaQuestion, setCaptchaQuestion] = useState("");
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
-  // Generate random CAPTCHA on component mount and after submission
+  // Fetch a CAPTCHA challenge from the backend. The answer is never sent to
+  // the browser - only an opaque token the server uses to check it later.
   const generateCaptcha = () => {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    const operators = ["+", "-", "*"];
-    const operator = operators[Math.floor(Math.random() * operators.length)];
-
-    let answer;
-    if (operator === "+") answer = num1 + num2;
-    else if (operator === "-") answer = num1 - num2;
-    else answer = num1 * num2;
-
-    setCaptchaQuestion(`${num1} ${operator} ${num2}`);
-    setCaptchaAnswer(answer.toString());
+    fetch("/api/captcha/")
+      .then((res) => res.json())
+      .then((data) => {
+        setCaptchaQuestion(data.question || "");
+        setCaptchaToken(data.token || "");
+      })
+      .catch((error) => {
+        console.error("Error fetching CAPTCHA:", error);
+      });
   };
 
   useEffect(() => {
@@ -41,17 +39,15 @@ function EnquiryForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Validate captcha
-    if (formData.captcha !== captchaAnswer) {
-      alert("CAPTCHA answer is incorrect");
-      return;
-    }
-    // Prepare data to send (without captcha)
+    // The CAPTCHA answer is verified server-side against captchaToken; we
+    // just forward whatever the user typed and let the backend decide.
     const enquiryData = {
       name: formData.name,
       email: formData.email,
       mobile: formData.mobile,
       message: formData.message,
+      captcha_token: captchaToken,
+      captcha_answer: formData.captcha,
     };
 
     // Send to backend API. Keep relative URL in local dev; use env override for production.
@@ -66,20 +62,28 @@ function EnquiryForm() {
       .then(async (res) => {
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
-          const errorMessage = data.message || data.error || JSON.stringify(data) || res.statusText;
+          const errorMessage =
+            (data.captcha && data.captcha[0]) ||
+            data.message ||
+            data.error ||
+            JSON.stringify(data) ||
+            res.statusText;
           throw new Error(errorMessage);
         }
         return data;
       })
       .then((data) => {
         alert(data.message || "Form submitted! We will contact you soon.");
-        // Reset form and generate new CAPTCHA
+        // Reset form and fetch a fresh CAPTCHA (tokens are single-use)
         setFormData({ name: "", email: "", mobile: "", message: "", captcha: "" });
         generateCaptcha();
       })
       .catch((error) => {
         console.error("Error submitting enquiry:", error);
-        alert(`Error submitting form: ${error.message}. Make sure the backend is running on localhost:8000.`);
+        alert(`Error submitting form: ${error.message}`);
+        // The CAPTCHA token is single-use even on failure - fetch a new one
+        setFormData((prev) => ({ ...prev, captcha: "" }));
+        generateCaptcha();
       });
   };
 

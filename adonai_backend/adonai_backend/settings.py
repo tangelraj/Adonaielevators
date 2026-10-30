@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-1m)-vscyvwkjj#h^3v6tpaxm8_86&(%6_k@i-99*1)ao(7eqsv)')
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'website.middleware.ContentSecurityPolicyMiddleware',
 ]
 
 ROOT_URLCONF = 'adonai_backend.urls'
@@ -126,6 +127,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+<<<<<<< HEAD
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
@@ -136,6 +138,44 @@ if not CORS_ALLOW_ALL_ORIGINS:
         default='http://localhost:3000,http://127.0.0.1:3000,https://adonaielevators.com,https://www.adonaielevators.com',
         cast=Csv()
     )
+=======
+# DRF throttling - protects the public enquiry/captcha endpoints from being flooded
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_RATES': {
+        'enquiry': config('ENQUIRY_THROTTLE_RATE', default='5/min'),
+        'captcha': config('CAPTCHA_THROTTLE_RATE', default='20/min'),
+        'hero': config('HERO_THROTTLE_RATE', default='30/min'),
+    },
+    'EXCEPTION_HANDLER': 'website.exceptions.custom_exception_handler',
+}
+
+# Abuse logging - a record of blocked CAPTCHA/throttle attempts (see website.exceptions
+# and EnquirySerializer.validate), always sent to the console regardless of DEBUG.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'abuse': {'format': '[%(asctime)s] %(message)s'},
+    },
+    'handlers': {
+        'abuse_console': {'class': 'logging.StreamHandler', 'formatter': 'abuse'},
+    },
+    'loggers': {
+        'website.abuse': {
+            'handlers': ['abuse_console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}
+
+# Explicit allow-list only - never widened automatically based on DEBUG, since that
+# previously meant any origin could hit the API whenever DEBUG happened to be on.
+CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS', default='http://localhost:3000', cast=Csv()
+)
+>>>>>>> 508658daa8d9d889962be0d100c489b5cc631b14
 
 # Email configuration
 # Read SMTP credentials from environment (.env via python-decouple)

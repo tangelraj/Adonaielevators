@@ -6,6 +6,7 @@ __pycache__/
 env/
 ENV/
 venv/
+.venv/
 *.env
 .env.local
 .env.*
@@ -35,3 +36,8 @@ build/
 dist/
 *.log
 coverage/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/

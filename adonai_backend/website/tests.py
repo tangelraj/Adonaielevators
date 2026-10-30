@@ -245,3 +245,27 @@ class EnquiryThrottleTests(APITestCase):
         # enquiry scope is exhausted, but captcha scope (1000/min) is untouched
         response = self.client.get("/api/captcha/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class SecurityHeadersTests(APITestCase):
+    """Guards against the CSP/CORS hardening silently regressing later."""
+
+    def setUp(self):
+        cache.clear()
+
+    def test_csp_header_present_on_every_response(self):
+        response = self.client.get("/api/hero/")
+        self.assertIn("Content-Security-Policy", response.headers)
+        self.assertIn("default-src 'self'", response.headers["Content-Security-Policy"])
+
+    @override_settings(CORS_ALLOWED_ORIGINS=["http://localhost:3000"])
+    def test_cors_header_reflects_allowed_origin(self):
+        response = self.client.get("/api/hero/", HTTP_ORIGIN="http://localhost:3000")
+        self.assertEqual(
+            response.headers.get("Access-Control-Allow-Origin"), "http://localhost:3000"
+        )
+
+    @override_settings(CORS_ALLOWED_ORIGINS=["http://localhost:3000"])
+    def test_cors_header_absent_for_disallowed_origin(self):
+        response = self.client.get("/api/hero/", HTTP_ORIGIN="https://evil.example.com")
+        self.assertNotIn("Access-Control-Allow-Origin", response.headers)

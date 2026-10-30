@@ -114,7 +114,7 @@
 
 .carousel-btn:hover {
   background: #0a4a7d;
-  transform: scale(1.1) translateY(-1px);
+  transform: scale(1.1);
 }
 
 .carousel-btn:active {
@@ -154,7 +154,7 @@
   border-radius: 50%;
   background: #ddd;
   cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease, width 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .dot:hover {
@@ -162,9 +162,9 @@
 }
 
 .dot.active {
-  background: linear-gradient(90deg, #0d5ea6, #2d92df);
+  background: #0d5ea6;
   width: 30px;
-  border-radius: 999px;
+  border-radius: 6px;
 }
 
 @keyframes fadeInUp {
@@ -185,84 +185,6 @@
   50% {
     transform: translateY(-6px);
   }
-}
-
-@media (max-width: 768px) {
-  .solutions-carousel {
-    gap: 15px;
-  }
-
-  .carousel-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
-  }
-
-  .solutions-container {
-    height: 400px;
-  }
-
-  .solution-card {
-    padding: 22px 18px;
-  }
-
-  .solution-image {
-    font-size: 60px;
-    height: 80px;
-  }
-
-  .solution-card h3 {
-    font-size: 1.2rem;
-  }
-
-  .solution-card p {
-    font-size: 0.9rem;
-  }
-}
-
-.carousel-btn:hover {
-  background: #0a4a7d;
-  transform: scale(1.1);
-}
-
-.read-more-btn {
-  background: #0d5ea6;
-  color: white;
-  border: none;
-  padding: 10px 30px;
-  font-size: 0.95rem;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  align-self: center;
-}
-
-.read-more-btn:hover {
-  background: #0a4a7d;
-  transform: translateY(-2px);
-}
-
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 30px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #ddd;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.dot.active {
-  background: #0d5ea6;
-  width: 30px;
-  border-radius: 6px;
 }
 
 @media (max-width: 768px) {

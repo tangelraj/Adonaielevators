@@ -10,6 +10,9 @@ from .serializers import HeroSerializer, EnquirySerializer
 from .captcha import generate_captcha
 
 class HeroAPIView(APIView):
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'hero'
+
     def get(self, request):
         hero = HeroSection.objects.first()
         serializer = HeroSerializer(hero)
@@ -28,7 +31,7 @@ class EnquiryAPIView(APIView):
     throttle_scope = 'enquiry'
 
     def post(self, request):
-        serializer = EnquirySerializer(data=request.data)
+        serializer = EnquirySerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             enquiry = serializer.save()
 

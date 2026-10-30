@@ -12,6 +12,7 @@ function EnquiryForm() {
 
   const [captchaQuestion, setCaptchaQuestion] = useState("");
   const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "";
 
   // Generate random CAPTCHA on component mount and after submission
   const generateCaptcha = () => {
@@ -53,8 +54,9 @@ function EnquiryForm() {
       message: formData.message,
     };
 
-    // Send to backend API (use relative URL so dev server proxy works)
-    fetch("/api/enquiry/", {
+    // Send to backend API. Keep relative URL in local dev; use env override for production.
+    const enquiryUrl = `${API_BASE_URL}/api/enquiry/` || "/api/enquiry/";
+    fetch(enquiryUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

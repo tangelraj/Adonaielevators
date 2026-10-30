@@ -127,18 +127,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-<<<<<<< HEAD
-CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
-if DEBUG:
-    CORS_ALLOW_ALL_ORIGINS = True
-
-if not CORS_ALLOW_ALL_ORIGINS:
-    CORS_ALLOWED_ORIGINS = config(
-        'CORS_ALLOWED_ORIGINS',
-        default='http://localhost:3000,http://127.0.0.1:3000,https://adonaielevators.com,https://www.adonaielevators.com',
-        cast=Csv()
-    )
-=======
 # DRF throttling - protects the public enquiry/captcha endpoints from being flooded
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
@@ -173,9 +161,10 @@ LOGGING = {
 # previously meant any origin could hit the API whenever DEBUG happened to be on.
 CORS_ALLOW_ALL_ORIGINS = config('CORS_ALLOW_ALL_ORIGINS', default=False, cast=bool)
 CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS', default='http://localhost:3000', cast=Csv()
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000,https://adonaielevators.com,https://www.adonaielevators.com',
+    cast=Csv()
 )
->>>>>>> 508658daa8d9d889962be0d100c489b5cc631b14
 
 # Email configuration
 # Read SMTP credentials from environment (.env via python-decouple)
@@ -217,7 +206,7 @@ SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', default=False, cast=bool)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'django-static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
